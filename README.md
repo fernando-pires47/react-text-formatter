@@ -79,3 +79,7 @@ The application uses a simple architecture with three main components:
 - **TextOutput**: Output area displaying formatted content with copy functionality
 
 Error handling is built-in for invalid syntax and clipboard operations.
+
+## License
+
+MIT License

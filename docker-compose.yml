@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  text-formatter:
+    build: .
+    container_name: text-formatter
+    ports:
+      - "3000:80"
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+          cpus: '0.5'
+    
+  # Development mode
+  text-formatter-dev:
+    image: node:20-alpine
+    container_name: text-formatter-dev
+    working_dir: /app
+    volumes:
+      - .:/app
+      - /app/node_modules
+    ports:
+      - "5173:5173"
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
+    profiles:
+      - dev

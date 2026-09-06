@@ -47,14 +47,14 @@ const Pane: React.FC<{
   value: string;
   onChange: (value: string) => void;
 }> = ({ label, value, onChange }) => (
-  <div className="flex flex-col border-r border-gray-800 overflow-hidden last:border-r-0">
+  <div className="flex flex-col border-r border-border overflow-hidden last:border-r-0">
     <div className="px-6 py-2 flex justify-between items-center">
-      <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+      <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
         {label}
       </span>
       {value && (
         <button
-          className="text-xs text-gray-500 hover:text-gray-200"
+          className="text-xs text-muted-foreground hover:text-foreground cursor-pointer"
           onClick={() => onChange('')}
         >
           Clear
@@ -66,7 +66,7 @@ const Pane: React.FC<{
       onChange={(e) => onChange(e.target.value)}
       onPaste={createPasteHandler(value, onChange)}
       placeholder={placeholder}
-      className="flex-1 w-full p-4 bg-gray-900 text-gray-100 border-0 resize-none focus:outline-none font-mono text-sm leading-relaxed"
+      className="flex-1 w-full p-4 bg-background text-foreground border-0 resize-none focus:outline-none font-mono text-[0.9375rem] leading-relaxed placeholder:text-muted-foreground"
     />
   </div>
 );
@@ -86,16 +86,20 @@ const TabView: React.FC<TabViewProps> = ({ left, right, onLeftChange, onRightCha
         : 'Contents are identical';
 
   return (
-    <div className="flex-1 flex flex-col overflow-hidden bg-gray-900">
-      <div className="diff-inputs grid grid-cols-1 lg:grid-cols-2 border-b border-gray-800">
+    <div className="flex-1 flex flex-col overflow-hidden bg-background">
+      <div className="diff-inputs grid grid-cols-1 lg:grid-cols-2 border-b border-border">
         <Pane label="Left (A)" value={left} onChange={onLeftChange} />
         <Pane label="Right (B)" value={right} onChange={onRightChange} />
       </div>
 
-      <div className="border-b border-gray-800 px-6 py-2">
+      <div className="border-b border-border px-6 py-2">
         <span
           className={`text-xs font-medium uppercase tracking-wide ${
-            hasError ? 'text-red-400' : result.changed ? 'text-yellow-400' : 'text-green-400'
+            hasError
+              ? 'text-destructive'
+              : result.changed
+                ? 'text-yellow-600 dark:text-yellow-400'
+                : 'text-primary'
           }`}
         >
           {status}
@@ -104,12 +108,12 @@ const TabView: React.FC<TabViewProps> = ({ left, right, onLeftChange, onRightCha
 
       {result.leftError && (
         <div className="px-6 py-3">
-          <p className="text-sm text-red-400">Left (A): {result.leftError}</p>
+          <p className="text-sm text-destructive">Left (A): {result.leftError}</p>
         </div>
       )}
       {result.rightError && (
         <div className="px-6 py-3">
-          <p className="text-sm text-red-400">Right (B): {result.rightError}</p>
+          <p className="text-sm text-destructive">Right (B): {result.rightError}</p>
         </div>
       )}
 

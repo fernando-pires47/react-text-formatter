@@ -54,3 +54,17 @@ export const formatContent = (input: string, type: FormatType): FormatResult => 
       return { success: false, error: 'Unsupported format type' };
   }
 };
+
+export const detectFormat = (text: string): FormatType | null => {
+  const trimmed = text.trim();
+  if (!trimmed) return null;
+  if (trimmed.startsWith('{') || trimmed.startsWith('[')) return 'json';
+  if (trimmed.startsWith('<')) return 'xml';
+  return null;
+};
+
+export const formatPasted = (text: string): FormatResult | null => {
+  const format = detectFormat(text);
+  if (!format) return null;
+  return formatContent(text, format);
+};

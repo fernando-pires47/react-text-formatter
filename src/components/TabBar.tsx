@@ -30,7 +30,7 @@ const TabBar: React.FC<TabBarProps> = ({
   };
 
   return (
-    <div className="border-b border-gray-800 px-6 py-2 flex items-center space-x-2">
+    <div className="border-b border-border px-6 py-2 flex items-center space-x-2">
       {tabs.map((tab) => (
         <div
           key={tab.id}

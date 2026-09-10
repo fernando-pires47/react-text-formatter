@@ -25,7 +25,11 @@ function App() {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-3">
-                <span className="text-2xl font-bold text-primary">{"{}"}</span>
+                <img
+                  src="/logo.png"
+                  alt="Text Formatter"
+                  className="h-8 w-8 object-contain"
+                />
                 <h1 className="text-xl font-semibold text-foreground">
                   Text Formatter
                 </h1>

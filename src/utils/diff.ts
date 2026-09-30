@@ -266,45 +266,73 @@ const xmlDiffLines = (a: XmlNode, b: XmlNode, indent: number, out: DiffLine[]) =
   onlyB.forEach((index) => emitXmlSame(b.children[index], indent + 1, out, 'add'));
 };
 
+const textDiffLines = (left: string, right: string): DiffLine[] => {
+  const leftLines = left.split('\n');
+  const rightLines = right.split('\n');
+  const rows = leftLines.length + 1;
+  const columns = rightLines.length + 1;
+
+  // Avoid allocating an excessively large matrix for very large plain-text inputs.
+  if (leftLines.length * rightLines.length > 1_000_000) {
+    return [
+      ...leftLines.map((text) => ({ type: 'del' as const, indent: 0, text })),
+      ...rightLines.map((text) => ({ type: 'add' as const, indent: 0, text })),
+    ];
+  }
+
+  const lcs = Array.from({ length: rows }, () => new Uint32Array(columns));
+  for (let i = leftLines.length - 1; i >= 0; i--) {
+    for (let j = rightLines.length - 1; j >= 0; j--) {
+      lcs[i][j] = leftLines[i] === rightLines[j]
+        ? lcs[i + 1][j + 1] + 1
+        : Math.max(lcs[i + 1][j], lcs[i][j + 1]);
+    }
+  }
+
+  const lines: DiffLine[] = [];
+  let i = 0;
+  let j = 0;
+  while (i < leftLines.length && j < rightLines.length) {
+    if (leftLines[i] === rightLines[j]) {
+      lines.push({ type: 'same', indent: 0, text: leftLines[i] });
+      i++;
+      j++;
+    } else if (lcs[i + 1][j] >= lcs[i][j + 1]) {
+      lines.push({ type: 'del', indent: 0, text: leftLines[i++] });
+    } else {
+      lines.push({ type: 'add', indent: 0, text: rightLines[j++] });
+    }
+  }
+  while (i < leftLines.length) lines.push({ type: 'del', indent: 0, text: leftLines[i++] });
+  while (j < rightLines.length) lines.push({ type: 'add', indent: 0, text: rightLines[j++] });
+  return lines;
+};
+
 export const diffContent = (left: string, right: string): DiffResult => {
   const leftTrimmed = left.trim();
   const rightTrimmed = right.trim();
 
-  if (!leftTrimmed && !rightTrimmed) {
+  if (!left && !right) {
     return { success: true, lines: [], changed: false };
   }
-  if (!leftTrimmed || !rightTrimmed) {
+  if (!left || !right) {
     return { success: true, lines: [], changed: false, error: 'Paste content on both sides to compare.' };
   }
 
   const leftFormat = detectFormat(leftTrimmed);
-  if (!leftFormat) {
-    return {
-      success: false,
-      lines: [],
-      changed: false,
-      error: 'Fix the left side to compare.',
-      leftError: 'Content is neither JSON nor XML (must start with {, [ or <)',
-    };
-  }
-
   const rightFormat = detectFormat(rightTrimmed);
-  if (!rightFormat) {
-    return {
-      success: false,
-      lines: [],
-      changed: false,
-      error: 'Fix the right side to compare.',
-      rightError: 'Content is neither JSON nor XML (must start with {, [ or <)',
-    };
+
+  if (!leftFormat && !rightFormat) {
+    const lines = textDiffLines(left, right);
+    return { success: true, lines, changed: lines.some((line) => line.type !== 'same') };
   }
 
-  if (leftFormat !== rightFormat) {
+  if (!leftFormat || !rightFormat || leftFormat !== rightFormat) {
     return {
       success: false,
       lines: [],
       changed: false,
-      error: `Left side is ${leftFormat.toUpperCase()} but right side is ${rightFormat.toUpperCase()}. Compare the same format on both sides.`,
+      error: `Left side is ${leftFormat?.toUpperCase() ?? 'plain text'} but right side is ${rightFormat?.toUpperCase() ?? 'plain text'}. Compare the same format on both sides.`,
     };
   }
 

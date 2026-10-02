@@ -268,8 +268,90 @@
 
 /* Diff */
 .diff-inputs {
-  height: 40vh;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+  height: var(--inputs-height, 60vh);
+  min-height: 400px;
+}
+.diff-inputs.right-collapsed {
+  grid-template-rows: minmax(0, 1fr);
+  height: var(--inputs-height, 40vh);
   min-height: 240px;
+}
+.pane-resizer {
+  display: none;
+  background: var(--muted);
+  border-inline: 1px solid var(--border);
+  cursor: col-resize;
+  touch-action: none;
+  user-select: none;
+}
+.pane-resizer:hover,
+.pane-resizer:focus-visible {
+  background: var(--primary);
+  outline: 2px solid var(--ring);
+  outline-offset: -2px;
+}
+@media (min-width: 1024px) {
+  .diff-inputs,
+  .diff-inputs.right-collapsed {
+    grid-template-columns: minmax(0, var(--left-pane-width)) 10px minmax(0, var(--right-pane-width));
+    grid-template-rows: minmax(0, 1fr);
+    height: var(--inputs-height, 40vh);
+    min-height: 240px;
+  }
+  .pane-resizer {
+    display: block;
+  }
+}
+.diff-inputs.diff-hidden {
+  flex: 1;
+  height: auto;
+}
+.diff-height-resizer {
+  flex-shrink: 0;
+  height: 10px;
+  background: var(--muted);
+  border-block: 1px solid var(--border);
+  cursor: row-resize;
+  touch-action: none;
+  user-select: none;
+}
+.diff-height-resizer:hover,
+.diff-height-resizer:focus-visible {
+  background: var(--primary);
+  outline: 2px solid var(--ring);
+  outline-offset: -2px;
+}
+.json-tool-button {
+  padding: 0.375rem 0.625rem;
+  border: 1px solid var(--border);
+  border-radius: 0.375rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+.json-tool-button:hover {
+  background: var(--secondary);
+  color: var(--secondary-foreground);
+}
+.json-tool-button:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+.json-dialog {
+  width: min(48rem, calc(100vw - 2rem));
+  max-height: calc(100dvh - 2rem);
+  margin: auto;
+  overflow: auto;
+}
+.json-dialog::backdrop {
+  background: rgb(0 0 0 / 0.6);
+}
+.json-dialog-output {
+  height: 45vh;
+  min-height: 120px;
 }
 .diff-line {
   display: flex;

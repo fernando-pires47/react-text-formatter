@@ -1,4 +1,7 @@
-export const copyToClipboard = async (text: string): Promise<boolean> => {
+export const copyToClipboard = async (
+  text: string,
+  container: HTMLElement = document.body,
+): Promise<boolean> => {
   try {
     if (navigator.clipboard && window.isSecureContext) {
       await navigator.clipboard.writeText(text);
@@ -10,13 +13,16 @@ export const copyToClipboard = async (text: string): Promise<boolean> => {
       textArea.style.position = 'fixed';
       textArea.style.left = '-999999px';
       textArea.style.top = '-999999px';
-      document.body.appendChild(textArea);
-      textArea.focus();
-      textArea.select();
-      
-      const result = document.execCommand('copy');
-      document.body.removeChild(textArea);
-      return result;
+      const previousFocus = document.activeElement;
+      container.appendChild(textArea);
+      try {
+        textArea.focus();
+        textArea.select();
+        return document.execCommand('copy');
+      } finally {
+        textArea.remove();
+        if (previousFocus instanceof HTMLElement) previousFocus.focus();
+      }
     }
   } catch (error) {
     console.error('Failed to copy to clipboard:', error);

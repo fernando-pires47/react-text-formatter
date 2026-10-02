@@ -18,7 +18,7 @@ function App() {
   const { theme, toggleTheme } = useTheme();
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col">
+    <div className="h-dvh bg-background text-foreground flex flex-col">
       {/* Header */}
       <div className="border-b border-border bg-background">
         <div className="max-w-7xl mx-auto px-6 py-4">
@@ -75,7 +75,7 @@ function App() {
       />
 
       {/* Active Tab Content */}
-      <div className="flex-1 flex overflow-hidden">
+      <div className="min-h-0 flex-1 flex overflow-hidden">
         {activeTab && (
           <TabView
             left={activeTab.left}

@@ -6,6 +6,11 @@ A simple and intuitive React SPA for formatting unstructured JSON and XML conten
 
 - 🔧 **Format JSON and XML**: Automatically formats unstructured JSON and XML content
 - 📋 **Copy to Clipboard**: One-click copy functionality for formatted output
+- ↔️ **Resizable Panels**: Drag the desktop divider to shrink the right panel down to zero, or use Hide/Show right panel on any screen size. Collapsing keeps its content.
+- 🔽 **Hide Differences**: Hide/show the bottom comparison area, including its status and errors, to give the editors more space without changing their content.
+- 🧩 **Restructure JSON**: Convert JSON5-style data (unquoted keys, single quotes, comments, and trailing commas) to strict JSON in a copyable dialog without changing the original input.
+- ✅ **Validate JSON**: Check either panel for strict JSON syntax and see validation errors in a dialog.
+- ↩️ **Undo/Redo**: Native editor undo/redo is preserved when pasting and auto-formatting content (Ctrl+Z / Ctrl+Shift+Z, or Cmd on macOS).
 - 🎨 **Clean UI**: Modern, responsive design with custom CSS utilities
 - ⚡ **Real-time Formatting**: Formats content as you type
 - 🔀 **Format Switching**: Easy toggle between JSON and XML formats
@@ -17,6 +22,7 @@ A simple and intuitive React SPA for formatting unstructured JSON and XML conten
 - **Vite** for fast development and building
 - **Custom CSS utilities** for styling
 - **Native JSON.stringify()** for JSON formatting
+- **JSON5** for safely parsing relaxed JSON syntax without executing code
 - **xml-formatter** for XML formatting
 
 ## Project Structure
@@ -58,6 +64,16 @@ src/
 2. Paste your unstructured content in the input area
 3. The formatted output will appear automatically in the output area
 4. Click the "Copy" button to copy the formatted content to your clipboard
+
+Each input panel also has **Restructure JSON** and **Validate JSON** buttons. For example, restructuring `{ teste: '123' }` produces `{ "teste": "123" }` with indentation. Validation is strict and rejects the original relaxed syntax. Unsupported JavaScript expressions and non-finite numbers are not converted.
+
+On desktop, drag the divider all the way right to collapse the right panel; drag it back to restore it. The focused divider also supports arrow keys, Home/End, and double-click to reset to equal widths. **Hide right panel** / **Show right panel** works on mobile too.
+
+Use **Hide differences** / **Show differences** to toggle the bottom comparison area. While hidden, the input panels expand into the available space; comparisons remain up to date when shown again.
+
+Drag the horizontal divider above the differences to resize their height. It also supports up/down arrow keys, Home/End, and double-click to reset. Hiding and showing differences keeps the selected height.
+
+Run `npm test` for the JSON conversion and validation tests.
 
 ## Example Inputs
 
